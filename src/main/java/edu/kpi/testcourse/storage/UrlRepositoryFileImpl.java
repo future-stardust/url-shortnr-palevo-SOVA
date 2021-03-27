@@ -55,7 +55,7 @@ public class UrlRepositoryFileImpl implements UrlRepository {
   }
 
   @Override
-  public void deleteUrlAlias(String email, String alias) throws PermissionDenied {
+  public void deleteUrlAlias(String email, String alias) throws AliasNotExist {
     for (UrlAlias currentAlias :
         getAllAliasesForUser(email)) {
       if (currentAlias.alias().equals(alias)) {
@@ -64,7 +64,7 @@ public class UrlRepositoryFileImpl implements UrlRepository {
         return;
       }
     }
-    throw new RuntimeException("Alias " + alias + " was not found among created by the user");
+    throw new AliasNotExist();
   }
 
   @Override
