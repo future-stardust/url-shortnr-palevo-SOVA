@@ -93,6 +93,10 @@ public class Logic {
     return null;
   }
 
+  public void deleteAlias(String email, String alias) throws UrlRepository.AliasNotExist {
+    urls.deleteUrlAlias(email, alias);
+  }
+
   /**
    * Error for situation when we are trying to register already registered user.
    */

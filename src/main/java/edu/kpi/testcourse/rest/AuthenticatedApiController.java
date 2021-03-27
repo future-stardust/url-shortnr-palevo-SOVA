@@ -1,18 +1,19 @@
 package edu.kpi.testcourse.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.kpi.testcourse.logic.Logic;
 import edu.kpi.testcourse.rest.models.ErrorResponse;
 import edu.kpi.testcourse.rest.models.UrlShortenRequest;
 import edu.kpi.testcourse.rest.models.UrlShortenResponse;
 import edu.kpi.testcourse.serialization.JsonTool;
+import edu.kpi.testcourse.storage.UrlRepository;
 import edu.kpi.testcourse.storage.UrlRepository.AliasAlreadyExist;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Delete;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.server.util.HttpHostResolver;
 import io.micronaut.security.annotation.Secured;
@@ -69,6 +70,20 @@ public class AuthenticatedApiController {
       return HttpResponse.serverError(
         json.toJson(new ErrorResponse(1, "Alias is already taken"))
       );
+    }
+  }
+
+
+  /**
+   * Delete URL alias.
+   */
+  @Delete(value = "/urls/{alias}", processes = MediaType.APPLICATION_JSON)
+  public HttpResponse<String> deleteAlias(String alias, Principal principal) {
+    try {
+      logic.deleteAlias(principal.getName(), alias);
+      return HttpResponse.ok("Alias " + alias + " was successfully removed");
+    } catch (UrlRepository.AliasNotExist e) {
+      return HttpResponse.notFound(e.getMessage());
     }
   }
 }
