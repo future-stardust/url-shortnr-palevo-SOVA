@@ -5,15 +5,18 @@ import edu.kpi.testcourse.logic.Logic;
 import edu.kpi.testcourse.rest.models.ErrorResponse;
 import edu.kpi.testcourse.rest.models.UrlShortenRequest;
 import edu.kpi.testcourse.rest.models.UrlShortenResponse;
+import edu.kpi.testcourse.rest.models.UrlsAliasesResponse;
 import edu.kpi.testcourse.serialization.JsonTool;
 import edu.kpi.testcourse.storage.UrlRepository;
 import edu.kpi.testcourse.storage.UrlRepository.AliasAlreadyExist;
+import edu.kpi.testcourse.storage.UrlRepositoryFileImpl;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.server.util.HttpHostResolver;
 import io.micronaut.security.annotation.Secured;
@@ -71,6 +74,16 @@ public class AuthenticatedApiController {
         json.toJson(new ErrorResponse(1, "Alias is already taken"))
       );
     }
+  }
+
+  /**
+   * Get user shortened links.
+   */
+  @Get(value = "/urls", processes = MediaType.APPLICATION_JSON)
+  public HttpResponse<String> getUserShortenedLinks(Principal principal) {
+    String email = principal.getName();
+
+    return HttpResponse.ok(json.toJson(new UrlsAliasesResponse(logic.getUserUrls(email))));
   }
 
 
